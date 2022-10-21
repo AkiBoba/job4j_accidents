@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -14,14 +14,98 @@
             integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <style>
+        .container {
+            width: 1450px;
+            height: auto;
+            background-color: bisque;
+            padding-top: 50px;
+            text-align: left;
+        }
+        body {
+            padding: 50px;
+            background-color: darkgrey;
+        }
+        header {
+            text-align: center;
+            background-color: cadetblue;
+        }
+        .table
+        {
+            display:table;
+            text-align: left;
+        }
 
-    <title th:text="${Text}"></title>
+        .table-row
+        {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .table-cell
+        {
+            width: 20%;
+        }
+
+        .table-cell:nth-child(3)
+        {
+            margin-right: 0px;
+        }
+    </style>
+
+    <title>Автонарушители</title>
 </head>
 <body>
 <div class="container">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Работа мечты</a>
+    <header>
+        <h5>Accidents</h5>
+    </header>
+    <nav>
+        <a th:href=@{/create}>Добавить инцидент</a>
     </nav>
+    <div class="table">
+        <div class="table-row">
+            <div class="table-cell">№ </div>
+            <div class="table-cell">Name </div>
+            <div class="table-cell">Text </div>
+            <div class="table-cell">Address </div>
+            <div class="table-cell">Type </div>
+            <div class="table-cell">Rule </div>
+            <div class="table-cell"> </div>
+            <div class="table-cell"> </div>
+        </div>
+            <tr th:each="accident: ${accidents}">
+                <div class="table-row">
+                    <div class="table-cell" th:text="${accident.id}">
+                    </div>
+                    <div class="table-cell" th:text="${accident.name}">
+                    </div>
+                    <div class="table-cell" th:text="${accident.text}">
+                    </div>
+                    <div class="table-cell" th:text="${accident.address}">
+                    </div>
+                    <div class="table-cell" th:text="${accident.type.name}">
+                    </div>
+                    <div class="table-cell">
+                        <div th:each="r: ${accident.rule}"
+                             th:text="${r.name}">
+                        </div>
+                    </div>
+                    <div class="table-cell">
+                            <a th:href="@{|/formEdit/${accident.id}|}">
+                                Edit
+                            </a>
+                    </div>
+                    <div class="table-cell">
+                            <a th:href="@{|/delete/${accident.id}|}">
+                                Delete
+                            </a>
+                    </div>
+                </div>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 </body>
 </html>
