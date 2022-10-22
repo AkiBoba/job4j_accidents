@@ -49,19 +49,19 @@ public class AccidentRuleRep {
         );
     }
 
-    public void save(int acc_id, Set<Rule> rules) {
-        rules.forEach(rule_id -> jdbc.update(
+    public void save(int accid, Set<Rule> rules) {
+        rules.forEach(ruleid -> jdbc.update(
                 SQL_SAVE_RULE,
-                acc_id,
-                rule_id.getId()
+                accid,
+                ruleid.getId()
                 )
         );
     }
 
-    public void update(int acc_id, Set<Rule> rules) {
+    public void update(int accid, Set<Rule> rules) {
         jdbc.update(SQL_DELETE_RULES_BY_ACCID,
-                acc_id);
-        save(acc_id, rules);
+                accid);
+        save(accid, rules);
     }
 
 }
