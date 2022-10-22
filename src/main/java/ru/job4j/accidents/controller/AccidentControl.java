@@ -2,7 +2,10 @@ package ru.job4j.accidents.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.model.Rule;
 import ru.job4j.accidents.service.AccidenTypeService;
@@ -10,7 +13,6 @@ import ru.job4j.accidents.service.AccidentRuleService;
 import ru.job4j.accidents.service.AccidentService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,17 +36,18 @@ public class AccidentControl {
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute Accident accident, Model model, HttpServletRequest req) {
-        int newAccid = accidents.save(accident, accident.getType().getId());
-        if (req.getParameterValues("rIds") != null) {
-            accidentRuleService.save(newAccid, getRules(req));
+    public String save(@ModelAttribute Accident accident, HttpServletRequest request) {
+        accident.setType(accidenTypeService.getById(accident.getType().getId()));
+        if (request.getParameterValues("rIds") != null) {
+            accident.setRules(getRules(request));
         }
+        accidents.create(accident, accident.getType().getId());
         return "redirect:/index";
     }
 
     @GetMapping ("/formEdit/{id}")
     public String edit(@PathVariable("id") int id, Model model) {
-        model.addAttribute("accident", accidents.findById(id));
+        model.addAttribute("accident", accidents.getById(id));
         model.addAttribute("types", accidenTypeService.getTypes());
         model.addAttribute("rules", accidentRuleService.getRules());
         return "edit";
@@ -52,10 +55,11 @@ public class AccidentControl {
 
     @PostMapping("/update")
     public String update(@ModelAttribute Accident accident, HttpServletRequest request) {
-        accidents.update(accident, accident.getType().getId());
+        accident.setType(accidenTypeService.getById(accident.getType().getId()));
         if (request.getParameterValues("rIds") != null) {
-            accidentRuleService.update(accident.getId(), getRules(request));
+            accident.setRules(getRules(request));
         }
+        accidents.update(accident);
         return "redirect:/index";
     }
 
@@ -71,7 +75,7 @@ public class AccidentControl {
 
     @GetMapping ("/delete/{id}")
     public String delete(@PathVariable("id") int id) {
-        accidents.delete(id);
+        accidents.delete(accidents.getById(id));
         return "redirect:/index";
     }
 }
