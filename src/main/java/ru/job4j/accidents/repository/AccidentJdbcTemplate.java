@@ -52,9 +52,9 @@ public class AccidentJdbcTemplate {
                         )
                 )
         ));
-        accidents.forEach(accident -> accident.setRule(accidentRuleService.getByAccId(accident.getId()
+        /*accidents.forEach(accident -> accident.setRules(accidentRuleService.getById(accident.getId()
                 )
-        ));
+        ));*/
         return accidents;
 
     }
