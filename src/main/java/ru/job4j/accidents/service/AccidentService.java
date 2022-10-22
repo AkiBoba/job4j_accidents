@@ -1,39 +1,35 @@
 package ru.job4j.accidents.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.accidents.model.Accident;
-import ru.job4j.accidents.repository.AccidentJdbcTemplate;
+import ru.job4j.accidents.model.AccidentType;
+import ru.job4j.accidents.repository.AccidentHibernate;
 
-import java.util.Collection;
+import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class AccidentService {
+    private final AccidentHibernate accidentsRepostiory;
 
-    private final AccidentJdbcTemplate accidentRepository;
-
-    public AccidentService(AccidentJdbcTemplate accidentRepository) {
-        this.accidentRepository = accidentRepository;
+    public void create(Accident accident, int typeId) {
+        accidentsRepostiory.save(accident, typeId);
     }
 
-    public Collection<Accident> getAll() {
-        return accidentRepository.getAll();
-
+    public List<Accident> getAll() {
+        return accidentsRepostiory.getAll();
     }
 
-    public int save(Accident accident, int typeId) {
-        return accidentRepository.save(accident, typeId);
-
+    public Accident getById(int id) {
+        return accidentsRepostiory.getById(id);
     }
 
-    public Accident findById(int id) {
-        return accidentRepository.findById(id);
+    public void delete(Accident accident) {
+        accidentsRepostiory.delete(accident);
     }
 
-    public Boolean update(Accident accident, int typeId) {
-        return accidentRepository.update(accident, typeId);
-    }
-
-    public Boolean delete(int id) {
-        return accidentRepository.delete(id);
+    public void update(Accident accident) {
+        accidentsRepostiory.update(accident);
     }
 }
