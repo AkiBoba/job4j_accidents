@@ -1,9 +1,7 @@
 package ru.job4j.accidents.repository;
 
 import lombok.AllArgsConstructor;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 import ru.job4j.accidents.model.Accident;
 
@@ -11,55 +9,34 @@ import java.util.List;
 
 @Repository
 @AllArgsConstructor
-public class AccidentHibernate {
+public class AccidentHibernate  implements Wrapper {
     private final SessionFactory sf;
 
-    public Accident save(Accident accident, int typeId) {
-        try (Session session = sf.openSession()) {
-            session.save(accident);
-            return accident;
-        }
+    public void save(Accident accident) {
+        this.tx(session -> session.save(accident), sf);
     }
 
     public List<Accident> getAll() {
-        try (Session session = sf.openSession()) {
-            return session
-                    .createQuery("from Accident", Accident.class)
-                    .list();
-        }
+        return this.tx(session -> session.createQuery("select distinct a from Accident a join fetch a.rules").list(), sf);
     }
 
     public Accident getById(int id) {
-        try (Session session = sf.openSession()) {
-            return session.find(Accident.class, id);
-        }
-    }
-
-    public void delete(Accident accident) {
-        final Session session = sf.openSession();
-        final Transaction tx = session.beginTransaction();
-        try {
-            session.delete(accident);
-            tx.commit();
-        } catch (final Exception e) {
-            session.getTransaction().rollback();
-            throw e;
-        } finally {
-            session.close();
-        }
+        return (Accident) this.tx(session -> session.createQuery("select distinct a from Accident a join fetch a.rules where a.id = :id")
+                .setParameter("id", id).uniqueResult(), sf);
     }
 
     public void update(Accident accident) {
-        final Session session = sf.openSession();
-        final Transaction tx = session.beginTransaction();
-        try {
+        this.tx(session -> {
             session.update(accident);
-            tx.commit();
-        } catch (final Exception e) {
-            session.getTransaction().rollback();
-            throw e;
-        } finally {
-            session.close();
-        }
+            return accident;
+        }, sf);
     }
+
+    public void delete(Accident accident) {
+        this.tx(session -> {
+            session.delete(accident);
+            return accident;
+        }, sf);
+    }
+
 }

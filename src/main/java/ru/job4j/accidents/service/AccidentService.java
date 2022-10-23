@@ -13,8 +13,8 @@ import java.util.List;
 public class AccidentService {
     private final AccidentHibernate accidentsRepostiory;
 
-    public void create(Accident accident, int typeId) {
-        accidentsRepostiory.save(accident, typeId);
+    public void create(Accident accident) {
+        accidentsRepostiory.save(accident);
     }
 
     public List<Accident> getAll() {
