@@ -41,7 +41,7 @@ public class AccidentControl {
         if (request.getParameterValues("rIds") != null) {
             accident.setRules(getRules(request));
         }
-        accidents.create(accident, accident.getType().getId());
+        accidents.create(accident);
         return "redirect:/index";
     }
 
