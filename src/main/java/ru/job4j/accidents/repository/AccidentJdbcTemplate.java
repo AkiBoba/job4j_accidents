@@ -45,7 +45,7 @@ public class AccidentJdbcTemplate {
                 "select * from accident",
                 new BeanPropertyRowMapper<>(Accident.class)
         );
-        accidents.forEach(accident -> accident.setType(accidenTypeService.getById(
+        /*accidents.forEach(accident -> accident.setType(accidenTypeService.getById(
                 jdbc.queryForObject(SQL_GET_TYPE,
                         new Object[] {accident.getId()},
                                 Integer.class

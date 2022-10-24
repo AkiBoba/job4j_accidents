@@ -6,8 +6,14 @@ import org.hibernate.Transaction;
 
 import java.util.function.Function;
 
-public interface Wrapper {
-    default <T> T tx(final Function<Session, T> command, SessionFactory sf) {
+public class Wrapper {
+    private final SessionFactory sf;
+
+    public Wrapper(SessionFactory sf) {
+        this.sf = sf;
+    }
+
+    public <T> T tx(final Function<Session, T> command) {
         final Session session = sf.openSession();
         final Transaction tx = session.beginTransaction();
         try {
