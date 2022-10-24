@@ -1,42 +1,43 @@
 package ru.job4j.accidents.repository;
 
-import lombok.AllArgsConstructor;
-import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.job4j.accidents.model.Accident;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
-@AllArgsConstructor
-public class AccidentHibernate  implements Wrapper {
-    private final SessionFactory sf;
+public class AccidentHibernate {
+    @Autowired
+    private final CrudRepository crudRepository;
+
+    public AccidentHibernate(CrudRepository crudRepository) {
+        this.crudRepository = crudRepository;
+    }
 
     public void save(Accident accident) {
-        this.tx(session -> session.save(accident), sf);
+        crudRepository.run(session -> session.persist(accident));
     }
 
     public List<Accident> getAll() {
-        return this.tx(session -> session.createQuery("select distinct a from Accident a join fetch a.rules").list(), sf);
+        return crudRepository
+                .query("select distinct a from Accident a join fetch a.rules", Accident.class);
     }
 
     public Accident getById(int id) {
-        return (Accident) this.tx(session -> session.createQuery("select distinct a from Accident a join fetch a.rules where a.id = :id")
-                .setParameter("id", id).uniqueResult(), sf);
+        return crudRepository.get(
+                "from Accident where id = :fId", Accident.class,
+                Map.of("fId", id)
+        );
     }
 
     public void update(Accident accident) {
-        this.tx(session -> {
-            session.update(accident);
-            return accident;
-        }, sf);
+        crudRepository.run(session -> session.update(accident));
     }
 
     public void delete(Accident accident) {
-        this.tx(session -> {
-            session.delete(accident);
-            return accident;
-        }, sf);
+        crudRepository.run(session -> session.delete(accident));
     }
 
 }

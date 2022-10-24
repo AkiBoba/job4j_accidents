@@ -1,25 +1,28 @@
 package ru.job4j.accidents.repository;
 
-import org.hibernate.SessionFactory;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.job4j.accidents.model.Rule;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
-public class RuleHibernate implements Wrapper {
-    private final SessionFactory sf;
-
-    public RuleHibernate(SessionFactory sf) {
-        this.sf = sf;
-    }
+@AllArgsConstructor
+public class RuleHibernate {
+    @Autowired
+    private final CrudRepository crudRepository;
 
     public List<Rule> getAll() {
-        return this.tx(session -> session
-                .createQuery("from Rule", Rule.class).list(), sf);
+        return crudRepository
+                .query("from Rule", Rule.class);
     }
 
     public Rule getById(int id) {
-        return this.tx(session -> session.find(Rule.class, id), sf);
+        return crudRepository.get(
+                "from Rule where id = :fId", Rule.class,
+                Map.of("fId", id)
+        );
     }
 }

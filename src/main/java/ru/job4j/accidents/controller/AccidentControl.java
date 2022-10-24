@@ -75,7 +75,8 @@ public class AccidentControl {
 
     @GetMapping ("/delete/{id}")
     public String delete(@PathVariable("id") int id) {
-        accidents.delete(accidents.getById(id));
+        Accident accident = accidents.getById(id);
+        accidents.delete(accident);
         return "redirect:/index";
     }
 }
